@@ -15,6 +15,8 @@ import androidx.navigation.compose.composable
 import com.example.bibliotech.BibliotecaApplication
 import com.example.bibliotech.data.LibrosPrueba
 import com.example.bibliotech.model.Libro
+import com.example.bibliotech.model.Estudiante
+import com.example.bibliotech.viewmodel.EstudianteViewModel
 import com.example.bibliotech.viewmodel.LibroViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.*
@@ -188,6 +190,87 @@ fun Navegacion(
                     navController.popBackStack()
                 }
             )
+        }
+
+        composable("Estudiantes") {
+            PantallaEstudiantes(
+                onRegresar = {
+                    navController.popBackStack()
+                },
+                onVerDetalles = { idEstudiante ->
+                    navController.navigate("detalleEstudiante/$idEstudiante")
+                },
+                onAgregarEstudiante = {
+                    navController.navigate("agregarEstudiante")
+                },
+                mensaje = mensaje,
+                onMensajeMostrado = { mensaje = null }
+            )
+        }
+
+        composable("agregarEstudiante") {
+            val app = LocalContext.current.applicationContext as BibliotecaApplication
+            val viewModel: EstudianteViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(
+                        modelClass: Class<T>
+                    ): T {
+                        return EstudianteViewModel(app as Application) as T
+                    }
+                }
+            )
+
+            PantallaAgregarEstudiante(
+                viewModel = viewModel,
+                onGuardar = {
+                    mensaje = "Estudiante guardado con éxito"
+                    navController.popBackStack()
+                },
+                onCancelar = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("detalleEstudiante/{idEstudiante}") {
+            val idEstudiante = it.arguments
+                ?.getString("idEstudiante")
+                ?.toIntOrNull()
+
+            val app = LocalContext.current.applicationContext as BibliotecaApplication
+            val viewModel: EstudianteViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(
+                        modelClass: Class<T>
+                    ): T {
+                        return EstudianteViewModel(app as Application) as T
+                    }
+                }
+            )
+
+            val estudiante by viewModel.estudianteSeleccionado.collectAsState()
+
+            LaunchedEffect(idEstudiante) {
+                if (idEstudiante != null) {
+                    viewModel.cargarEstudiantePorId(idEstudiante)
+                }
+            }
+
+            if (idEstudiante != null && estudiante != null) {
+                PantallaDetalleEstudiante(
+                    estudiante = estudiante!!,
+                    onRegresar = { navController.popBackStack() },
+                    navController = navController,
+                    onEditar = { id ->
+                        // Navegación a editar estudiante
+                    },
+                    onEliminar = { estudianteEliminar ->
+                        viewModel.eliminarEstudiante(estudianteEliminar)
+                        mensaje = "Estudiante eliminado con éxito"
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 }
