@@ -1,7 +1,5 @@
 package com.example.bibliotech.ui
 
-import android.R
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,8 +30,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -57,19 +53,20 @@ fun PantallaDetalleEstudiante(
         ?.savedStateHandle
         ?.get<String>("mensaje")
 
-    LaunchedEffect(mensaje?.value) {
-         mensaje?.value?.let{
-            snackbarHostState.showSnackbar(it)
-            navController.currentBackStackEntry
+    LaunchedEffect(mensaje) {
+        if (mensaje != null) {
+            snackbarHostState.showSnackbar(mensaje)
+            backStackEntry
                 ?.savedStateHandle
-                ?.set("mensaje", null)
+                ?.remove<String>("mensaje")
         }
     }
 
-    Scaffold(
+    var mostrarDialogo by remember { mutableStateOf(false) }
 
-        snackbarHost = { SnackbarHost(snackbarHost = snackbarHostState) },
+    Scaffold(
         containerColor = Color.Black,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -86,40 +83,103 @@ fun PantallaDetalleEstudiante(
     ) { padding ->
         Column(
             modifier = Modifier
-                .padding(padding).fillMaxWidth()
+                .fillMaxSize()
+                .padding(20.dp)
+                .padding(padding)
         ) {
             Icon(
-
-                imageVector = Icons.Default.Person, contentDescription = "Estudiante",
-                modifier = Modifier.padding(60.dp)
-            tint = Color.White)
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "${estudiante.nombres} ${estudiante.apellidos}",
-                color = Color.White, fontWeight = FontWeight.Bold, fontSize = 26.sp
-                )
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Carnet: ${estudiante.carnet}", color = Color.White)
-            Text(text = "Grado: ${estudiante.grado}", color = Color.White)
-            Text(text = "Seccion: ${estudiante.seccion}", color = Color.White)
-            Text(text = if (estudiante.activo)"Estado: Activo"
-            else "Estado: Inactivo",
-                color = if (estudiante.activo) Color.Green
-                else Color.Red
-
+                imageVector = Icons.Default.Person,
+                contentDescription = "Estudiante",
+                modifier = Modifier.size(60.dp),
+                tint = Color.White
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {onEditar(estudiante.id) }, modifier = Modifier.fillMaxWidth())
-            {Text("Editar")}
-            Button(onClick = {mostrarDialogo=true }, modifier = Modifier.fillMaxWidth())
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
 
+            Text(
+                text = "${estudiante.nombres} ${estudiante.apellidos}",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 26.sp
+            )
 
+            Spacer(modifier = Modifier.height(16.dp))
 
+            Text(text = "Carnet: ${estudiante.carnet}", color = Color.White, fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(8.dp))
 
+            Text(text = "Grado: ${estudiante.grado}", color = Color.White, fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(8.dp))
 
+            Text(text = "Sección: ${estudiante.seccion}", color = Color.White, fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = if (estudiante.activo) "Estado: Activo" else "Estado: Inactivo",
+                color = if (estudiante.activo) Color.Green else Color.Red,
+                fontSize = 18.sp
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { onEditar(estudiante.id) },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Editar")
+                }
+
+                Button(
+                    onClick = { mostrarDialogo = true },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                ) {
+                    Text("Eliminar")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            OutlinedButton(
+                onClick = onRegresar,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Regresar", color = Color.White)
+            }
+
+            if (mostrarDialogo) {
+                AlertDialog(
+                    onDismissRequest = { mostrarDialogo = false },
+                    title = {
+                        Text("Confirmación")
+                    },
+                    text = {
+                        Text("¿Estás seguro de eliminar a \"${estudiante.nombres} ${estudiante.apellidos}\"?")
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                mostrarDialogo = false
+                                onEliminar(estudiante)
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        ) {
+                            Text("Eliminar")
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = { mostrarDialogo = false }
+                        ) {
+                            Text("Cancelar")
                         }
                     }
+                )
             }
+        }
+    }
+}

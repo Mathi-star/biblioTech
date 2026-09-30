@@ -262,11 +262,51 @@ fun Navegacion(
                     onRegresar = { navController.popBackStack() },
                     navController = navController,
                     onEditar = { id ->
-                        // Navegación a editar estudiante
+                        navController.navigate("editarEstudiante/$id")
                     },
                     onEliminar = { estudianteEliminar ->
                         viewModel.eliminarEstudiante(estudianteEliminar)
                         mensaje = "Estudiante eliminado con éxito"
+                        navController.popBackStack()
+                    }
+                )
+            }
+        }
+
+        composable("editarEstudiante/{idEstudiante}") {
+            val idEstudiante = it.arguments?.getString("idEstudiante")?.toIntOrNull()
+            val app = LocalContext.current.applicationContext as BibliotecaApplication
+            val viewModel: EstudianteViewModel = viewModel(
+                factory = object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(
+                        modelClass: Class<T>
+                    ): T {
+                        return EstudianteViewModel(app as Application) as T
+                    }
+                }
+            )
+
+            val estudiante by viewModel.estudianteSeleccionado.collectAsState()
+            LaunchedEffect(idEstudiante) {
+                if (idEstudiante != null) {
+                    viewModel.cargarEstudiantePorId(idEstudiante)
+                }
+            }
+
+            if (estudiante != null) {
+                PantallaEditarEstudiante(
+                    estudiante = estudiante!!,
+                    onGuardar = { estudianteEditado ->
+                        viewModel.actualizarEstudiante(estudianteEditado)
+                        navController.previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set(
+                                "mensaje",
+                                "Cambios guardados correctamente"
+                            )
+                        navController.popBackStack()
+                    },
+                    onCancelar = {
                         navController.popBackStack()
                     }
                 )
