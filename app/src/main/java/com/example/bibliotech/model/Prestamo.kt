@@ -1,40 +1,35 @@
 package com.example.bibliotech.model
 
-import android.R
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import androidx.room.util.TableInfo
 
 @Entity(
     tableName = "Prestamos",
     foreignKeys = [
         ForeignKey(
             entity = Libro::class,
-            parentColumns =[ "id" ],
-            childColumns = [ "idLibro" ],
-            ),
-
-        ForeignKey(
-            entity = Libro::class,
-            parentColumns =[ "id" ],
-            childColumns = [ "idLibro" ],
+            parentColumns = ["id"],
+            childColumns = ["idLibro"]
         ),
-                 ]
+        ForeignKey(
+            entity = Estudiante::class,
+            parentColumns = ["id"],
+            childColumns = ["idEstudiante"]
+        )
+    ]
 )
 data class Prestamo(
     @PrimaryKey(autoGenerate = true)
-    val id: Int =0,
-    //Libro prestado
+    val id: Int = 0,
+    // Libro prestado
     val idLibro: Int,
-    //Estudiante que lo presta
+    // Estudiante que lo presta
     val idEstudiante: Int,
-    //Fecha en que se presta
+    // Fecha en que se presta
     val fechaPrestamo: String,
-    //fecha en la que se desea devolver
+    // Fecha en la que se desea devolver
     val fechaDevolucion: String,
-    //estado prestamo
+    // Estado prestamo
     val devuelto: Boolean = false
-
-
 )
