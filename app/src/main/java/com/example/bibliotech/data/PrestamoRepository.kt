@@ -4,6 +4,10 @@ import com.example.bibliotech.model.Prestamo
 
 class PrestamoRepository(private val prestamoDao: PrestamoDao) {
 
+    fun insertarPrestamo(prestamo: Prestamo): Long {
+        return prestamoDao.insertar(prestamo)
+    }
+
     fun insertar(prestamo: Prestamo): Long {
         return prestamoDao.insertar(prestamo)
     }

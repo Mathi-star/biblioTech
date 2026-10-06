@@ -41,12 +41,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun PantallaDetalleLibro(Libro:Libro,
-                         onRegresar:()-> Unit,
-                         onEditar:(Int) -> Unit,
-                         onEliminar:(Libro) -> Unit,
-                         navController: NavController,
-){
+fun PantallaDetalleLibro(
+    libro: Libro,
+    onRegresar: () -> Unit,
+    onEditar: (Int) -> Unit,
+    onEliminar: (Libro) -> Unit,
+    navController: NavController
+) {
     val snackbarHostState= remember { SnackbarHostState() }
     val backStackEntry by navController.currentBackStackEntryAsState()
     val mensaje=
@@ -91,38 +92,38 @@ colors = TopAppBarDefaults.topAppBarColors(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = Libro.titulo,
+                text = libro.titulo,
                 fontSize = 28.sp,
                 color = Color.White
 
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Autor ${Libro.autor}",
+                text = "Autor ${libro.autor}",
                 fontSize = 18.sp,
                 color = Color.White
 
             )
             Text(
-                text = "Categoria ${Libro.categoria}",
+                text = "Categoria ${libro.categoria}",
                 fontSize = 18.sp,
                 color = Color.White
 
             )
             Text(
-                text = "Año Publicacion ${Libro.anio}",
+                text = "Año Publicacion ${libro.anio}",
                 fontSize = 18.sp,
                 color = Color.White
 
             )
             Text(
-                text = "Descripcion ${Libro.descripcion}",
+                text = "Descripcion ${libro.descripcion}",
                 fontSize = 18.sp,
                 color = Color.White
 
             )
             Text(
-                text = "Disponibilidad ${Libro.disponible}",
+                text = "Disponibilidad ${libro.disponible}",
                 fontSize = 18.sp,
                 color = Color.White
 
@@ -135,7 +136,7 @@ colors = TopAppBarDefaults.topAppBarColors(
             ) {
                 Button(
                     onClick = {
-                        onEditar(Libro.id)
+                        onEditar(libro.id)
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -167,13 +168,13 @@ colors = TopAppBarDefaults.topAppBarColors(
                         Text("Confirmacion")
                     },
                     text={
-                        Text("Estas seguro de eliminar \"${Libro.titulo}\"?")
+                        Text("Estas seguro de eliminar \"${libro.titulo}\"?")
                     },
                     confirmButton = {
                         Button(
                             onClick = {
                                 mostrarDialogo=false
-                                onEliminar(Libro)
+                                onEliminar(libro)
                             }
                         ) {
                             Text("Elimiar")
