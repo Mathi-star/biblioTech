@@ -85,6 +85,23 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
         )
     }
 }
+
+val MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(
+        database: SupportSQLiteDatabase
+    ) {
+        database.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS Usuarios (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                nombre TEXT NOT NULL,
+                usuario TEXT NOT NULL,
+                contrasena TEXT NOT NULL
+            )
+            """.trimIndent()
+        )
+    }
+}
 // ============================================================
 // PROVEEDOR DE LA BASE DE DATOS
 // ============================================================
@@ -104,11 +121,9 @@ object DatabaseProvider {
                 "bibliotech_database"
             )
                 // ====================================================
-                // REGISTRAMOS LA MIGRACIÓN
+                // REGISTRAMOS LAS MIGRACIONES
                 // ====================================================
-                // Le indicamos a Room cómo pasar de la versión 1
-                // a la versión 2.
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                 // Construimos la base de datos
                 .build()
             INSTANCE = instance

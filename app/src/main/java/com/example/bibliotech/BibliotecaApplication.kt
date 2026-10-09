@@ -6,6 +6,7 @@ import com.example.bibliotech.data.DatabaseProvider
 import com.example.bibliotech.data.EstudianteRepository
 import com.example.bibliotech.data.LibroRepository
 import com.example.bibliotech.data.PrestamoRepository
+import com.example.bibliotech.data.UsuarioRepository
 
 class BibliotecaApplication : Application() {
 
@@ -35,6 +36,12 @@ class BibliotecaApplication : Application() {
         get() = database.prestamoDao()
 
     // =========================
+    // DAO DE USUARIOS
+    // =========================
+    val usuarioDao
+        get() = database.usuarioDao()
+
+    // =========================
     // REPOSITORY DE LIBROS
     // =========================
     val libroRepository: LibroRepository by lazy {
@@ -53,5 +60,12 @@ class BibliotecaApplication : Application() {
     // =========================
     val prestamoRepository: PrestamoRepository by lazy {
         PrestamoRepository(prestamoDao)
+    }
+
+    // =========================
+    // REPOSITORY DE USUARIOS
+    // =========================
+    val usuarioRepository: UsuarioRepository by lazy {
+        UsuarioRepository(usuarioDao)
     }
 }

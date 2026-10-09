@@ -22,15 +22,9 @@ fun PantallaPrincipal(
     onCatalogo: () -> Unit,
     onPrestamo: () -> Unit,
     onPrestados: () -> Unit,
-    // NUEVO:
-    // Función que permitirá abrir la pantalla de estudiantes.
     onEstudiantes: () -> Unit,
-// --------------------------------------------------------------------------
-    // Mensaje que recibe desde Navegacion.
+    onCerrarSesion: () -> Unit,
     mensaje: String?,
-
-
-    // Función para avisar que el mensaje ya fue mostrado.
     onMensajeMostrado: () -> Unit
 ) {
     // ---------------------------------------------------------
@@ -166,5 +160,18 @@ fun PantallaPrincipal(
                 texto = "Libros prestados",
                 onClick = onPrestados
             )
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+
+            // ============================================
+            // CERRAR SESIÓN
+            // ============================================
+            BotonMenu(
+                texto = "Cerrar sesión",
+                onClick = onCerrarSesion
+            )
         }
-    }}
+    }
+}
